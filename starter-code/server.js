@@ -18,8 +18,7 @@ const conString = 'postgres://localhost:5432';
 
 // DONE: Our pg module has a Client constructor that accepts one argument: the conString we just defined.
 //       This is how it knows the URL and, for Windows and Linux users, our username and password for our
-//       database when client.connect is called on line 25. Thus, we need to pass our conString into our
-//       pg.Client() call.
+//       database when client.connect is called on line 25. Thus, we need to pass our conString into our pg.Client() call.
 const client = new pg.Client(conString);
 
 // REVIEW: Use the client object to connect to our DB.
@@ -36,7 +35,7 @@ app.use(express.static('./public'));
 app.get('/new', function(request, response) {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
 
-  // 2,5. A request is made for the '/new' file, and the sendFile function returns the new.html page to express. This interacts with the Article.fetchAll(). app.get is read and response.sendFile is update.
+  // 5. This is a response from server to view. There is no method in article.js that calls this. This is the READ part of CRUD
   response.sendFile('new.html', {root: './public'});
 });
 
@@ -45,7 +44,7 @@ app.get('/new', function(request, response) {
 app.get('/articles', function(request, response) {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
 
-  // 3, and 4. This interacts with the Article.fetchAll() in article.js. This is READ part of CRUD.
+  // 3, 4, and 5. This interacts with the Article.fetchAll() in article.js. This is READ part of CRUD.
   client.query('SELECT * FROM articles')
   .then(function(result) {
     response.send(result.rows);
@@ -142,6 +141,7 @@ app.delete('/articles', function(request, response) {
 });
 
 // COMMENT: What is this function invocation doing?
+
 // It is calling loadDB which looks to see if there is a table created and if not it defines the data type of the fields. After that it calls loadArticles() which gets the data from hackerIpsum and creates the table.
 loadDB();
 
@@ -155,7 +155,7 @@ app.listen(PORT, function() {
 function loadArticles() {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
 
-  // 3, 4. Article.prototype.insertRecord in article.js. The CREATE part of CRUD
+  // 3, 4. No method in article.js interacts with this code. The CREATE part of CRUD.
   client.query('SELECT COUNT(*) FROM articles')
   .then(result => {
     // REVIEW: result.rows is an array of objects that Postgres returns as a response to a query.
@@ -182,7 +182,7 @@ function loadArticles() {
 function loadDB() {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
 
-  // 3, and 4. Article.prototype.insertRecord in article.js The CREATE part of CRUD. 
+  // 3 query. No method in article.js is calling this code. The CREATE part of CRUD.
   client.query(`
     CREATE TABLE IF NOT EXISTS articles (
       article_id SERIAL PRIMARY KEY,
